@@ -19,15 +19,31 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import androidx.room.Room;
+import valkov.vladimir.wifilogger.db.LogData;
+import valkov.vladimir.wifilogger.db.MainDB;
+import valkov.vladimir.wifilogger.db.TimestampConverter;
 
 public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        MainDB db = Room.databaseBuilder(getApplicationContext(),
+                        MainDB.class, "maindb")
+               // .addTypeConverter(new TimestampConverter())
+                .allowMainThreadQueries()
+                .build();
 
         TextView text = findViewById(R.id.textView);
         Button button = findViewById(R.id.button);
@@ -37,16 +53,20 @@ public class MainActivity extends AppCompatActivity {
         BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
-                Log.d("vlad", "receive");
                 boolean success = intent.getBooleanExtra(
                         WifiManager.EXTRA_RESULTS_UPDATED, false);
                 if (success) {
                     //scanSuccess();
-                    Log.d("vlad", "results1");
                     List<ScanResult> results = wifiManager.getScanResults();
-                    Log.d("vlad", "results2->"+ results.size());
+                    Date timestamp = Calendar.getInstance().getTime();
                     for (ScanResult res: results) {
-                        text.append("\n" + res.toString());
+                        LogData point = new LogData();
+                        point.bssid = res.BSSID;
+                        point.frequency = res.frequency;
+                        point.signalLevel = res.level;
+                        point.logTimeStamp = timestamp;
+
+                        db.logDao().insertPoint(point);
                     }
                 } else {
                     // scan failure handling
