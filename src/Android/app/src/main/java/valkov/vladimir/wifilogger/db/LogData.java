@@ -25,4 +25,7 @@ public class LogData {
 
     @ColumnInfo(name = "signal_level")
     public int signalLevel;
+
+    @ColumnInfo(name = "name")
+    public String name;
 }

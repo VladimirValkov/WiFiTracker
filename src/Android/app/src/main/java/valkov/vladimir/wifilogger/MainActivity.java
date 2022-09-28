@@ -39,14 +39,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MainDB db = Room.databaseBuilder(getApplicationContext(),
-                        MainDB.class, "maindb")
-               // .addTypeConverter(new TimestampConverter())
-                .allowMainThreadQueries()
-                .build();
+        MainDB db = MainDB.getInstance(this);
 
         TextView text = findViewById(R.id.textView);
         Button button = findViewById(R.id.button);
+        Button button2 = findViewById(R.id.button2);
+        Button button3 = findViewById(R.id.button3);
 
         WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
@@ -65,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
                         point.frequency = res.frequency;
                         point.signalLevel = res.level;
                         point.logTimeStamp = timestamp;
+                        point.name = res.SSID;
 
                         db.logDao().insertPoint(point);
                     }
@@ -87,6 +86,26 @@ public class MainActivity extends AppCompatActivity {
                     //scanFailure();
                     Log.d("vlad", "error");
                 }
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                List<Date> ts = db.logDao().getTimestamps();
+
+                for(Date d: ts){
+                    List<LogData> pts = db.logDao().getPointsOfTimestamps(d);
+                    int a = 0;
+                }
+            }
+        });
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent service = new Intent(MainActivity.this, ForegroundCollectorService.class);
+                ContextCompat.startForegroundService(MainActivity.this, service);
             }
         });
 

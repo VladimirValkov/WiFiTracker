@@ -12,21 +12,7 @@ import androidx.room.TypeConverter;
 
 @ProvidedTypeConverter
 public class TimestampConverter {
-    static DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-//    @TypeConverter
-//    public static Date fromTimestamp(String value) {
-//        if (value != null) {
-//            try {
-//                return df.parse(value);
-//            } catch (ParseException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//        } else {
-//            return null;
-//        }
-//    }
     @TypeConverter
     public static Date fromTimestamp(Long value) {
         return value == null ? null : new Date(value);
