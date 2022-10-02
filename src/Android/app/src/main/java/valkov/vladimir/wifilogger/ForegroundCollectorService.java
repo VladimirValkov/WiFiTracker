@@ -27,41 +27,58 @@ public class ForegroundCollectorService extends Service {
     WifiManager wifiManager = null;
     MainDB db = null;
     boolean collectorStarted = false;
+    BroadcastReceiver mainReceiver = null;
 
     private void initializeCollector() {
 
         wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         db = MainDB.getInstance(this);
 
-        BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
+         mainReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context c, Intent intent) {
-                boolean success = intent.getBooleanExtra(
-                        WifiManager.EXTRA_RESULTS_UPDATED, false);
-                if (success) {
-                    //scanSuccess();
-                    List<ScanResult> results = wifiManager.getScanResults();
-                    Date timestamp = Calendar.getInstance().getTime();
-                    for (ScanResult res: results) {
-                        LogData point = new LogData();
-                        point.bssid = res.BSSID;
-                        point.frequency = res.frequency;
-                        point.signalLevel = res.level;
-                        point.logTimeStamp = timestamp;
-                        point.name = res.SSID;
+                String action = intent.getAction();
 
-                        db.logDao().insertPoint(point);
-                    }
-                } else {
-                    // scan failure handling
-                    Log.d("vlad", "error2");
+                switch (action){
+                    case WifiManager.SCAN_RESULTS_AVAILABLE_ACTION:
+                        boolean success = intent.getBooleanExtra(
+                                WifiManager.EXTRA_RESULTS_UPDATED, false);
+                        if (success) {
+                            //scanSuccess();
+                            List<ScanResult> results = wifiManager.getScanResults();
+                            Date timestamp = Calendar.getInstance().getTime();
+                            for (ScanResult res: results) {
+                                LogData point = new LogData();
+                                point.bssid = res.BSSID;
+                                point.frequency = res.frequency;
+                                point.signalLevel = res.level;
+                                point.logTimeStamp = timestamp;
+                                point.name = res.SSID;
+
+                                db.logDao().insertPoint(point);
+                            }
+                        } else {
+                            // scan failure handling
+                            Log.d("vlad", "error2");
+                        }
+                        break;
+                    case Globals.COMMAND_SERVICE_RUNNING:
+                        reportState();
+                        break;
+                    case Globals.COMMAND_SERVICE_FORCE_SEND_DATA:
+                        sendToServer();
+                        break;
+
                 }
+
             }
         };
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        this.getApplicationContext().registerReceiver(wifiScanReceiver, intentFilter);
+        intentFilter.addAction(Globals.COMMAND_SERVICE_RUNNING);
+        intentFilter.addAction(Globals.COMMAND_SERVICE_FORCE_SEND_DATA);
+        this.getApplicationContext().registerReceiver(mainReceiver, intentFilter);
     }
 
     @Override
@@ -98,12 +115,24 @@ public class ForegroundCollectorService extends Service {
                 }
             });
         }
+
+        reportState();
         return super.onStartCommand(intent, flags, startId);
     }
 
     private void sendToServer() {
         Log.d("vlad", "sendToServer: " + db.logDao().getTimestamps().size());
-
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        boolean state = true;
+        String error = "";
+        Intent answIntent = new Intent(Globals.COMMAND_SERVICE_FORCE_SEND_DATA_ANSWER);
+        answIntent.putExtra(Globals.PARAMETER_SEND_STATE, state);
+        answIntent.putExtra(Globals.PARAMETER_SEND_ERROR, error);
+        sendBroadcast(answIntent);
     }
 
     @Override
@@ -116,6 +145,8 @@ public class ForegroundCollectorService extends Service {
         wifiManager = null;
         db = null;
         collectorStarted = false;
+        if(mainReceiver != null) this.getApplicationContext().unregisterReceiver(mainReceiver);
+        reportState();
         stopForeground(true);
         stopSelf();
         super.onDestroy();
@@ -137,5 +168,11 @@ public class ForegroundCollectorService extends Service {
 
             startForeground(123,notification);
         }
+    }
+
+    private void reportState(){
+        Intent answIntent = new Intent(Globals.COMMAND_SERVICE_RUNNING_ANSWER);
+        answIntent.putExtra(Globals.PARAMETER_SERVICE_STATE, collectorStarted);
+        ForegroundCollectorService.this.sendBroadcast(answIntent);
     }
 }

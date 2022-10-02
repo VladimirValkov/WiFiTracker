@@ -19,17 +19,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import androidx.room.Room;
 import valkov.vladimir.wifilogger.db.LogData;
 import valkov.vladimir.wifilogger.db.MainDB;
-import valkov.vladimir.wifilogger.db.TimestampConverter;
 
 public class MainActivity extends AppCompatActivity {
+    BroadcastReceiver mainReceiver = null;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -41,71 +39,76 @@ public class MainActivity extends AppCompatActivity {
 
         MainDB db = MainDB.getInstance(this);
 
-        TextView text = findViewById(R.id.textView);
-        Button button = findViewById(R.id.button);
-        Button button2 = findViewById(R.id.button2);
-        Button button3 = findViewById(R.id.button3);
+        Button serviceButton = findViewById(R.id.button_service_control);
+        Button sendButton = findViewById(R.id.button_send);
+        Button button2 = findViewById(R.id.button_options);
 
-        WifiManager wifiManager = (WifiManager) this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-        BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
+         mainReceiver = new BroadcastReceiver() {
             @Override
-            public void onReceive(Context c, Intent intent) {
-                boolean success = intent.getBooleanExtra(
-                        WifiManager.EXTRA_RESULTS_UPDATED, false);
-                if (success) {
-                    //scanSuccess();
-                    List<ScanResult> results = wifiManager.getScanResults();
-                    Date timestamp = Calendar.getInstance().getTime();
-                    for (ScanResult res: results) {
-                        LogData point = new LogData();
-                        point.bssid = res.BSSID;
-                        point.frequency = res.frequency;
-                        point.signalLevel = res.level;
-                        point.logTimeStamp = timestamp;
-                        point.name = res.SSID;
+            public void onReceive(Context context, Intent intent) {
+                switch (intent.getAction()){
+                    case Globals.COMMAND_SERVICE_RUNNING_ANSWER:
+                        boolean isRunning = intent.getBooleanExtra(Globals.PARAMETER_SERVICE_STATE, false);
+                        serviceButton.setTag(isRunning);
+                        if (isRunning)
+                        {
+                            serviceButton.setText("Stop Service");
+                        }
+                        else
+                        {
+                            serviceButton.setText("Start Service");
+                        }
+                        break;
+                    case Globals.COMMAND_SERVICE_FORCE_SEND_DATA_ANSWER:
+                        boolean send = intent.getBooleanExtra(Globals.PARAMETER_SEND_STATE, false);
+                        String error = intent.getStringExtra(Globals.PARAMETER_SEND_ERROR);
+                        CharSequence text = "";
+                        if (send)
+                        {
+                            text = "Data has been sent.";
 
-                        db.logDao().insertPoint(point);
-                    }
-                } else {
-                    // scan failure handling
-                    Log.d("vlad", "error2");
+                        }
+                        else{
+                            text = "There was an error while sending.\n" + error;
+                        }
+
+                        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+                        break;
                 }
             }
         };
-
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-        this.getApplicationContext().registerReceiver(wifiScanReceiver, intentFilter);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean success = wifiManager.startScan();
-                if (!success) {
-                    // scan failure handling
-                    //scanFailure();
-                    Log.d("vlad", "error");
-                }
-            }
-        });
+        intentFilter.addAction(Globals.COMMAND_SERVICE_RUNNING_ANSWER);
+        intentFilter.addAction(Globals.COMMAND_SERVICE_FORCE_SEND_DATA_ANSWER);
+        this.getApplicationContext().registerReceiver(mainReceiver, intentFilter);
+        sendBroadcast(new Intent(Globals.COMMAND_SERVICE_RUNNING));
 
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                List<Date> ts = db.logDao().getTimestamps();
 
-                for(Date d: ts){
-                    List<LogData> pts = db.logDao().getPointsOfTimestamps(d);
-                    int a = 0;
-                }
-            }
-        });
 
-        button3.setOnClickListener(new View.OnClickListener() {
+        serviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent service = new Intent(MainActivity.this, ForegroundCollectorService.class);
+                if (serviceButton.getTag() != null)
+                {
+                    boolean running = (boolean) serviceButton.getTag();
+                    if (running)
+                    {
+                        stopService(service);
+                        return;
+                    }
+                }
                 ContextCompat.startForegroundService(MainActivity.this, service);
+
+
+            }
+        });
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendBroadcast(new Intent(Globals.COMMAND_SERVICE_FORCE_SEND_DATA));
             }
         });
 
@@ -117,4 +120,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+       if (mainReceiver != null) this.getApplicationContext().unregisterReceiver(mainReceiver);
+        super.onDestroy();
+    }
 }
