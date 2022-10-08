@@ -1,7 +1,6 @@
 package valkov.vladimir.wifilogger.db;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import androidx.room.AutoMigration;
 import androidx.room.Database;
@@ -11,7 +10,7 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 
-@Database(entities = {LogData.class}, version = 1, exportSchema = true
+@Database(entities = {LogData.class, Options.class}, version = 1, exportSchema = true
 //        autoMigrations = {
 //                //@AutoMigration(from = 1, to = 2),
 //                @AutoMigration (from = 2, to = 3),
@@ -21,6 +20,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 )
 public abstract class MainDB extends RoomDatabase {
     public abstract LogDao logDao();
+
+    public abstract OptionsDao optionsDao();
 
     private static volatile MainDB instance = null;
 
