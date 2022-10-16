@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/src/dotNet/WiFiTracker/bin/Debug/netcoreapp3.1
+/src/Android/.idea
+/src/dotNet/WiFiTracker/obj
+/src/dotNet/WiFiTracker/.vs/WiFiTracker/v16
+/src/Android/app/schemas/valkov.vladimir.wifilogger.db.MainDB
