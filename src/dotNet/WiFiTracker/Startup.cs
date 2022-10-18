@@ -26,7 +26,7 @@ namespace WiFiTracker
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = "server=oracle.4every.info;user=vladimirvalkov;password=vladimirvalkov2022;database=wifitrack";
+            var connectionString = "server=wifitracker.4every.info;user=vladimirvalkov;password=vladimirvalkov2022;database=wifitrack";
             var serverVersion = ServerVersion.AutoDetect(connectionString);
 
             services.AddDbContext<MainDB>(
