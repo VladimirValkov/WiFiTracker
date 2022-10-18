@@ -8,7 +8,7 @@ namespace WiFiTracker.Models
     public class PointData
     {
         public string terminalid { get; set; }
-        public DateTime logdate  { get; set; }
+        public string logdate  { get; set; }
         public List<WiFiData> routers { get; set; }
         public class WiFiData
         {

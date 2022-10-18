@@ -15,5 +15,6 @@ namespace WiFiTracker.DB
 
         public DbSet<Terminal> Terminals { get; set; }
         public DbSet<Point> Points { get; set; }
+        public DbSet<Transmitter> Transmitters { get; set; }
     }
 }
