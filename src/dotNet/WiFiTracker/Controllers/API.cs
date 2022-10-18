@@ -101,6 +101,10 @@ namespace WiFiTracker.Controllers
                     sorted_routers.RemoveAt(0);
                 }
             }
+            if (coordinates.Count() == 0)
+            {
+                return Ok();
+            }
             double lat = coordinates[0].glt();
             double lon = coordinates[0].gln();
             foreach (var coord in coordinates)
