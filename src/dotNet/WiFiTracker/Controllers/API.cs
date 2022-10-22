@@ -37,7 +37,13 @@ namespace WiFiTracker.Controllers
         public IActionResult AddPoint([FromBody] JsonElement body)
         {
             
-            PointData data = JsonSerializer.Deserialize<PointData>(body.GetRawText()); 
+            PointData data = JsonSerializer.Deserialize<PointData>(body.GetRawText());
+            db.Logs.Add(new Log(){
+                Date = DateTime.Now,
+                Type = "api/addpoint",
+                Content = body.GetRawText()
+            });
+            db.SaveChanges();
             if (data == null)
             {
                 return BadRequest(new Error() { Message = "Data is not presented." });
