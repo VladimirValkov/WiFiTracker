@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         Button optionsButton = findViewById(R.id.button_options);
         Button loggedDataButton = findViewById(R.id.button_view_data);
 
+        sendButton.setEnabled(false);
+
 
          mainReceiver = new BroadcastReceiver() {
             @Override
@@ -46,10 +48,12 @@ public class MainActivity extends AppCompatActivity {
                         if (isRunning)
                         {
                             serviceButton.setText("Stop Service");
+                            sendButton.setEnabled(true);
                         }
                         else
                         {
                             serviceButton.setText("Start Service");
+                            sendButton.setEnabled(false);
                         }
                         break;
                     case Globals.COMMAND_SERVICE_FORCE_SEND_DATA_ANSWER:

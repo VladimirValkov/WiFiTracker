@@ -1,5 +1,6 @@
 package valkov.vladimir.wifilogger;
 
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,13 +15,28 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 
+import androidx.annotation.NonNull;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttp;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import valkov.vladimir.wifilogger.db.LogData;
 import valkov.vladimir.wifilogger.db.MainDB;
+import valkov.vladimir.wifilogger.db.Options;
+import valkov.vladimir.wifilogger.models.ApiPointData;
 
 public class ForegroundCollectorService extends Service {
 
@@ -123,8 +139,53 @@ public class ForegroundCollectorService extends Service {
     private void sendToServer() {
         Log.d("vlad", "sendToServer: " + db.logDao().getTimestamps().size());
         try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
+            Options options = db.optionsDao().getOptions();
+            List<Date> timestamps = db.logDao().getTimestamps();
+            for(Date timestamp: timestamps)
+            {
+                ApiPointData pointData = new ApiPointData();
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                pointData.setLogdate(formatter.format(timestamp));
+                pointData.setTerminalid(options.identifier);
+                for (LogData router: db.logDao().getPointsOfTimestamps(timestamp))
+                {
+                    ApiPointData.WiFiData wiFiData = new ApiPointData.WiFiData();
+                    wiFiData.setName(router.name);
+                    wiFiData.setBssid(router.bssid);
+                    wiFiData.setFrequency(router.frequency);
+                    wiFiData.setLevel(router.signalLevel);
+                    pointData.getRouters().add(wiFiData);
+                }
+                String jsonPointData = new Gson().toJson(pointData);
+                OkHttpClient http  = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url(options.serverURL + "/Api/addpoint")
+                        .post(RequestBody.create(jsonPointData, MediaType.get("application/json")))
+                        .header("content-type", "application/json")
+                        .build();
+                http.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        if (response.isSuccessful())
+                        {
+                            for (LogData pointData: db.logDao().getPointsOfTimestamps(timestamp))
+                            {
+                                db.logDao().deletePoint(pointData);
+                            }
+                            Log.i("SendToServer", "Success send point" + timestamp);
+                        }
+                        else{
+                            Log.i("SendToServer", "Error send point" + timestamp + " " + response.message());
+                        }
+                    }
+                });
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         boolean state = true;
