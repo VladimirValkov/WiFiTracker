@@ -23,5 +23,7 @@ namespace WiFiTracker.Controllers
             
             return View();
         }
+
+        //TODO Change All() to Index()
     }
 }

@@ -72,7 +72,7 @@ namespace WiFiTracker.Controllers
             {
                 return Ok();
             }
-            var sorted_routers = data.routers.OrderBy(x => x.level).ToList();
+            var sorted_routers = data.routers.OrderBy(x => Math.Abs(x.level)).ToList();
             List<MathLogic.Point> coordinates = new List<MathLogic.Point>();
             foreach (var router in sorted_routers.ToList())
             {
@@ -99,6 +99,7 @@ namespace WiFiTracker.Controllers
                         }).Where(x=>x != null).ToArray();
 
                     double[] coords = Trilateration.Compute(joined[0], joined[1], joined[2]);
+                    var coords2 = Trilateration.getTrilateration(joined[0], joined[1], joined[2]);
                     if (coords == null)
                     {
                         continue;
