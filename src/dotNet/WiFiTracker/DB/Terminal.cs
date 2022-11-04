@@ -14,9 +14,11 @@ namespace WiFiTracker.DB
         public int Id { get; set; }
         
         [StringLength(100)]
+        [Required]
         public string TerminalId { get; set; }
 
         [StringLength(100)]
+        [Required]
         public string Name { get; set; }
 
 

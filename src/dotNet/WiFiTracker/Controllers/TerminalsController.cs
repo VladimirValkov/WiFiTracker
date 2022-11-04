@@ -14,16 +14,72 @@ namespace WiFiTracker.Controllers
         {
             db = _db;
         }
-        public IActionResult All()
+        public IActionResult Index()
         {
             return View(db.Terminals.ToList());
         }
-        public IActionResult Terminal()
+        public IActionResult Add()
         {
             
             return View();
         }
 
-        //TODO Change All() to Index()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Add(Terminal data)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Terminals.Add(data);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(data);
+            
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var data = db.Terminals.Find(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            return View(data);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Terminal data)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Terminals.Update(data);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(data);
+
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var data = db.Terminals.Find(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            db.Terminals.Remove(data);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }

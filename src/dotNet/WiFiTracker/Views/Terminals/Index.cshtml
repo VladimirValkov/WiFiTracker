@@ -1,0 +1,59 @@
+﻿@model List<Terminal>
+@{
+    ViewData["Title"] = "Terminals";
+}
+<h1>@ViewData["Title"]</h1>
+
+
+<table class="table table-hover">
+    <thead>
+        <tr class="table-primary">
+            <th scope="col">TerminalId</th>
+            <th scope="col">Name</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="table-light">
+                <td>@item.TerminalId</td>
+                <td>@item.Name</td>
+                <td align="right" width="20%">
+                    <a asp-controller="Terminals" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                    <a data-bs-target="#deleteModal" data-bs-toggle="modal" class="btn btn-danger deleteItem"
+                       data-path="@Url.Action("Delete", "Terminals", new { id = @item.Id })">Delete</a>
+
+                </td>
+            </tr>
+
+
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-controller="Terminals" asp-action="Add">Add New Terminal</a>
+
+
+
+
+
+    <div class="modal" id="deleteModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Terminal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this terminal ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnContinueDelete" type="button" class="btn btn-danger">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
