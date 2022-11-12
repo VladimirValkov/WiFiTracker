@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WiFiTracker.DB
+namespace WiFiTracker.Models
 {
-    public class Transmitter
+    public class TransmitterData
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key, Column(Order = 0)]
         public int Id { get; set; }
 
         [StringLength(100)]
+        [Required]
         public string Bssid { get; set; }
 
         [StringLength(100)]
+        [Required]
         public string Name { get; set; }
 
-        public double Longitude { get; set; }
+        [Required]
+        public string Longitude { get; set; }
 
-        public double Latitude { get; set; }
+        [Required]
+        public string Latitude { get; set; }
     }
 }

@@ -21,3 +21,54 @@ $(".deleteItem").click(function (e) {
 $('#btnContinueDelete').click(function () {
     window.location = path_to_delete;
 });
+
+var gMap;
+function initializeGMap(contrainerId) {
+    mapcode = new google.maps.Geocoder();
+    var loc = {};
+    if (google.loader.ClientLocation) {
+        loc.lat = google.loader.ClientLocation.latitude;
+        loc.lng = google.loader.ClientLocation.longitude;
+    }
+    else {
+        loc.lat = 42.68583;
+        loc.lng = 26.32917;
+    }
+
+    var lnt = new google.maps.LatLng(loc.lat, loc.lng);
+    var diagChoice = {
+        zoom: 15,
+        center: lnt,
+        diagId: google.maps.MapTypeId.ROADMAP
+    }
+    gMap = new google.maps.Map(document.getElementById(contrainerId), diagChoice);
+
+
+}
+
+
+
+function TransmittersCoords(contrainerId) {
+    initializeGMap(contrainerId);
+    var marker = null;
+    google.maps.event.addListener(gMap, 'click', function (args) {
+        console.log('latlng', args.latLng);
+        if (marker != null) {
+            marker.setMap(null);
+        }
+        marker = addMarkerToMap(args.latLng, null)
+        $('#lonBox').val(args.latLng.lng());
+        $('#latBox').val(args.latLng.lat());
+    });
+}
+
+function addMarkerToMap(pointlatlng, title) {
+    var marker = new google.maps.Marker({
+        position: pointlatlng,
+        title: title,
+        map: gMap,
+        draggable: true
+    });
+    return marker;
+    
+}

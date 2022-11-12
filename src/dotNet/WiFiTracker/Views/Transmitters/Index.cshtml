@@ -1,0 +1,32 @@
+﻿@model List<Transmitter>
+
+
+<h1>Transmitters</h1>
+<table class="table table-hover">
+    <thead>
+        <tr class="table-primary">
+            <th scope="col">BSSID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Longitude</th>
+            <th scope="col">Latitude</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr class="table-light">
+            <td>@item.Bssid</td>
+            <td>@item.Name</td>
+            <td>@item.Longitude</td>
+            <td>@item.Latitude</td>
+            <td align="right" width="20%">
+                <a class="btn btn-primary">Edit</a>
+                <a data-bs-target="#deleteModal" data-bs-toggle="modal" class="btn btn-danger deleteItem">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-controller="Transmitters" asp-action="Add">Add New Transmitter</a>

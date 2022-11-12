@@ -1,0 +1,88 @@
+﻿@model TransmitterData
+
+<form class="mt-2" method="post">
+    <fieldset>
+        <legend>Add Transmitter</legend>
+        <div class="form-group">
+            <label class="form-label mt-4">BSSID:</label>
+            <input type="text" placeholder="a1:b2:c3:d4:e5:f6" class="form-control" asp-for="Bssid">
+        </div>
+        <div class="form-group">
+            <label class="form-label mt-4">Name:</label>
+            <input type="text" placeholder="Transmitter Name" class="form-control" asp-for="Name">
+        </div>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-auto">
+                            <label class="form-label mt-4" for="inputValid">Logitude:</label>
+                        </div>
+                        <div class="col">
+                            <input type="number" id="lonBox" placeholder="" class="form-control" asp-for="Longitude">
+                        </div>
+                    </div>
+                </div>
+                &nbsp;&nbsp;&nbsp;
+                <div class="col">
+                    <div class="row">
+                        <div class="col-auto">
+                            <label class="form-label mt-4" for="inputValid">Latitude:</label>
+                        </div>
+                        <div class="col">
+                            <input type="number" id="latBox" placeholder="" class="form-control" asp-for="Latitude">
+                        </div>
+                    </div>
+                </div>
+                &nbsp;&nbsp;&nbsp;
+                <div class="col-auto">
+                    <button data-bs-target="#gmapdialog" data-bs-toggle="modal" class="btn btn-light" >Pick from map</button>
+                </div>
+            </div>
+        </div>
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary mr-3">Save</button>
+            &nbsp;&nbsp;&nbsp;
+            <a class="btn btn-warning " asp-controller="Transmitters" asp-action="Index">Cancel</a>
+        </div>
+    </fieldset>
+</form>
+
+
+
+<div class="modal fade" id="gmapdialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pick coordinates</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </button>
+            </div>
+            <div class="modal-body col">
+                <div id="gMapContainer" style="width:100%; height:500px">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">&nbsp;&nbsp;&nbsp; OK &nbsp;&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
+
+<script>
+    window.addEventListener('load', (event) => {
+        TransmittersCoords('gMapContainer')
+    });
+</script>
+
+
