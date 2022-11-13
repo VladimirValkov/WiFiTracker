@@ -1,0 +1,23 @@
+﻿@model List<MapPin>
+
+<div id="mapComponent" style="width:100%;height:600px" class="mt-5">
+
+</div>
+
+
+<script>
+    window.addEventListener('load', (event) => {
+
+        const data = [];
+
+       @foreach (var row in Model)
+            {
+                @:data.push({ lat: parseFloat(@row.Latitude.Replace(',','.')), lon: parseFloat(@row.Longitude.Replace(',','.')), name: '@row.Name' });
+            }
+
+        TrackHistory('mapComponent', data);
+    });
+</script>
+
+
+
