@@ -27,6 +27,17 @@ namespace WiFiTracker.Controllers
                 Longitude = Convert.ToDouble(data.Longitude.Replace(',', seperator).Replace('.', seperator)),
             };
         }
+        private TransmitterData DbToMapData(Transmitter data)
+        {
+            return new TransmitterData()
+            {
+                Id = data.Id,
+                Bssid = data.Bssid,
+                Name = data.Name,
+                Latitude = data.Latitude.ToString(),
+                Longitude = data.Longitude.ToString(),
+            };
+        }
         public IActionResult Index()
         {
             return View(db.Transmitters.ToList());
@@ -34,7 +45,11 @@ namespace WiFiTracker.Controllers
 
         public IActionResult Add()
         {
-            return View();
+            var data = new TransmitterData();
+            var lastData = db.Transmitters.OrderBy(a=>a.Id).Last();
+            data.LastLatitude = lastData.Latitude.ToString();
+            data.LastLongitude = lastData.Longitude.ToString();
+            return View(data);
         }
 
         [HttpPost]
@@ -49,6 +64,60 @@ namespace WiFiTracker.Controllers
             }
             return View(data);
 
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var data = db.Transmitters.Find(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            return View(DbToMapData(data));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(TransmitterData data)
+        {
+            if (ModelState.IsValid)
+            {
+                Transmitter dbData;
+                try
+                {
+                    dbData = MapDataToDb(data);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("Latitude", "Latitude or Longitude value is not in correct format.");
+                    return View(data);
+                }
+                db.Transmitters.Update(dbData);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(data);
+
+        }
+
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var data = db.Transmitters.Find(id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            db.Transmitters.Remove(data);
+            db.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

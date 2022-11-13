@@ -36,9 +36,10 @@ namespace WiFiTracker.Controllers
         [HttpPost]
         public IActionResult AddPoint([FromBody] JsonElement body)
         {
-            
+
             PointData data = JsonSerializer.Deserialize<PointData>(body.GetRawText());
-            db.Logs.Add(new Log(){
+            db.Logs.Add(new Log()
+            {
                 Date = DateTime.Now,
                 Type = "api/addpoint",
                 Content = body.GetRawText()
@@ -62,7 +63,7 @@ namespace WiFiTracker.Controllers
             List<Transmitter> transmitters = db.Transmitters.ToList();
             foreach (var router in data.routers.ToList())
             {
-                if (!transmitters.Any(x=>x.Bssid == router.bssid))
+                if (!transmitters.Any(x => x.Bssid == router.bssid))
                 {
                     data.routers.Remove(router);
                 }
@@ -72,66 +73,38 @@ namespace WiFiTracker.Controllers
             {
                 return Ok();
             }
-            var sorted_routers = data.routers.OrderBy(x => Math.Abs(x.level)).ToList();
-            List<MathLogic.Point> coordinates = new List<MathLogic.Point>();
-            foreach (var router in sorted_routers.ToList())
+
+            var joined = data.routers.Join(transmitters, fc => fc.bssid, t => t.Bssid, (fc, t) =>
             {
-                var for_calc = sorted_routers.Take(3).ToArray();
-                if (for_calc.Count() < 3)
+                if (fc == null)
                 {
-                    break;
+                    return null;
                 }
                 else
                 {
-                    var joined = for_calc.Join(transmitters, fc => fc.bssid, t => t.Bssid, (fc, t) =>
+                    return new NonlinearLeastSquares.Coords()
                     {
-                        if (fc == null)
-                        {
-                            return null;
-                        }
-                        else
-                        {
-                            return new MathLogic.Point(
-                            t.Latitude,
-                            t.Longitude,
-                            Helpers.calculateDistance(fc.level, fc.frequency));
-                        }
-                        }).Where(x=>x != null).ToArray();
+                        latitude = t.Latitude,
+                        longitude = t.Longitude,
+                        distance = (int)(Helpers.calculateDistance(fc.level, fc.frequency)*1000)
+                    };
 
-                    double[] coords = Trilateration.Compute(joined[0], joined[1], joined[2]);
-                    var coords2 = Trilateration.getTrilateration(joined[0], joined[1], joined[2]);
-                    if (coords == null)
-                    {
-                        continue;
-                    }
-                    coordinates.Add(new MathLogic.Point(coords[0], coords[1], 0));
-                    sorted_routers.RemoveAt(0);
                 }
-            }
-            if (coordinates.Count() == 0)
-            {
-                return Ok();
-            }
-            double lat = coordinates[0].glt();
-            double lon = coordinates[0].gln();
-            foreach (var coord in coordinates)
-            {
-                lat += coord.glt();
-                lat /= 2;
-                lon += coord.gln();
-                lon /= 2;
-            }
+            }).Where(x => x != null).ToList();
+
+            var result = NonlinearLeastSquares.Calculate(joined);
             var terminal = db.Terminals.FirstOrDefault(t => t.TerminalId == data.terminalid);
             db.Points.Add(new DB.Point()
             {
                 TerminalId = terminal.Id,
-                Latitude = lat,
-                Longitude = lon,
+                Latitude = result.latitude,
+                Longitude = result.longitude,
                 LogDate = DateTime.Parse(data.logdate)
             });
             db.SaveChanges();
-            
+
             return Ok();
         }
+
     }
 }

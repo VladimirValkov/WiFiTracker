@@ -23,7 +23,7 @@ $('#btnContinueDelete').click(function () {
 });
 
 var gMap;
-function initializeGMap(contrainerId) {
+function initializeGMap(contrainerId, Oldlon, Oldlat) {
     mapcode = new google.maps.Geocoder();
     var loc = {};
     if (google.loader.ClientLocation) {
@@ -31,8 +31,14 @@ function initializeGMap(contrainerId) {
         loc.lng = google.loader.ClientLocation.longitude;
     }
     else {
-        loc.lat = 42.68583;
-        loc.lng = 26.32917;
+        if (Oldlat != null && Oldlon != null) {
+            loc.lat = Oldlat;
+            loc.lng = Oldlon;
+        }
+        else {
+            loc.lat = 42.68583;
+            loc.lng = 26.32917;
+        }
     }
 
     var lnt = new google.maps.LatLng(loc.lat, loc.lng);
@@ -48,9 +54,9 @@ function initializeGMap(contrainerId) {
 
 
 
-function TransmittersCoords(contrainerId) {
-    initializeGMap(contrainerId);
-    var marker = null;
+function TransmittersCoords(contrainerId, Oldlon, Oldlat) {
+    initializeGMap(contrainerId, Oldlon, Oldlat);
+    var marker = addMarkerToMap(new google.maps.LatLng(Oldlat, Oldlon), "");
     google.maps.event.addListener(gMap, 'click', function (args) {
         console.log('latlng', args.latLng);
         if (marker != null) {
@@ -67,7 +73,7 @@ function addMarkerToMap(pointlatlng, title) {
         position: pointlatlng,
         title: title,
         map: gMap,
-        draggable: true
+        draggable: false
     });
     return marker;
     

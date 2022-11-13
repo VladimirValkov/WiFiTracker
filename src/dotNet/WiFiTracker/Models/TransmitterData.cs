@@ -23,5 +23,9 @@ namespace WiFiTracker.Models
 
         [Required]
         public string Latitude { get; set; }
+
+        public string LastLongitude { get; set; }
+
+        public string LastLatitude { get; set; }
     }
 }
