@@ -1,16 +1,83 @@
-﻿@model List<MapPin>
+﻿@model TrackHistoryModel
+
+
+<form method="post">
+    <fieldset>
+        <div class="row justify-content-md-center mt-2">
+            <div class="col-3">
+                <div class="row">
+                    <div class="col-md-auto">
+                        <label class="form-label mt-4" for="inputValid">Terminal:</label>
+                    </div>
+                    <div class="col">
+                        <select class="form-select" id="exampleSelect1" asp-for="TerminalId">
+
+                            @foreach (var item in Model.Terminals)
+                            {
+                                <option value=@item.Id>@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <div class="row">
+                    <div class="col-md-auto">
+                        <label class="form-label mt-4" for="inputValid">From:</label>
+                    </div>
+                    <div class="col">
+                        <input class="form-control" id="datetimepickerFrom" type="text" asp-for="DateFrom">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <div class="row">
+                    <div class="col-md-auto">
+                        <label class="form-label mt-4" for="inputValid">To:</label>
+                    </div>
+                    <div class="col">
+                        <input class="form-control" id="datetimepickerTo" type="text" asp-for="DateTo">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-auto">
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary mt-2">Check Route</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
 
 <div id="mapComponent" style="width:100%;height:600px" class="mt-5">
 
 </div>
 
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
+
 
 <script>
     window.addEventListener('load', (event) => {
 
+        jQuery('#datetimepickerFrom').datetimepicker({
+            format: 'd.m.Y H:i',
+        });
+        jQuery('#datetimepickerTo').datetimepicker({
+            format: 'd.m.Y H:i',
+        });
+
         const data = [];
 
-       @foreach (var row in Model)
+       @foreach (var row in Model.Result)
             {
                 @:data.push({ lat: parseFloat(@row.Latitude.Replace(',','.')), lon: parseFloat(@row.Longitude.Replace(',','.')), name: '@row.Name' });
             }
