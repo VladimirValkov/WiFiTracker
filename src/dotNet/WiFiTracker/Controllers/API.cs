@@ -101,7 +101,7 @@ namespace WiFiTracker.Controllers
             }
             
             var result = NonlinearLeastSquares.Calculate(joined);
-            if (result != null)
+            if (result != null && result.latitude != 0 && result.longitude != 0)
             {
                 var terminal = db.Terminals.FirstOrDefault(t => t.TerminalId == data.terminalid);
                 db.Points.Add(new DB.Point()
