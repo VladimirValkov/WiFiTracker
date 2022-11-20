@@ -35,7 +35,7 @@ namespace WiFiTracker.Controllers
         [HttpPost]
         public IActionResult Index(TrackHistoryModel data)
         {
-            data.Result = db.Points.Where(a => a.LogDate >= DateTime.Parse(data.DateFrom) && a.LogDate <= DateTime.Parse(data.DateTo) && a.TerminalId == int.Parse(data.TerminalId))
+            data.Result = db.Points.Where(a => a.LogDate >= DateTime.ParseExact(data.DateFrom, "dd.MM.yyyy HH:mm", null) && a.LogDate <= DateTime.ParseExact(data.DateTo, "dd.MM.yyyy HH:mm", null) && a.TerminalId == int.Parse(data.TerminalId))
                 .OrderBy(a => a.LogDate)
                 .Join(db.Terminals, p => p.TerminalId, t => t.Id, (p, t) => new MapPin()
                 {

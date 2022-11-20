@@ -63,7 +63,7 @@ namespace WiFiTracker.Controllers
             List<Transmitter> transmitters = db.Transmitters.ToList();
             foreach (var router in data.routers.ToList())
             {
-                if (!transmitters.Any(x => x.Bssid == router.bssid))
+                if (!transmitters.Any(x => x.Bssid?.ToLower() == router.bssid?.ToLower()))
                 {
                     data.routers.Remove(router);
                 }
@@ -74,7 +74,7 @@ namespace WiFiTracker.Controllers
                 return Ok();
             }
 
-            var joined = data.routers.Join(transmitters, fc => fc.bssid, t => t.Bssid, (fc, t) =>
+            var joined = data.routers.Join(transmitters, fc => fc.bssid?.ToLower(), t => t.Bssid?.ToLower(), (fc, t) =>
             {
                 if (fc == null)
                 {
@@ -93,16 +93,19 @@ namespace WiFiTracker.Controllers
             }).Where(x => x != null).ToList();
 
             var result = NonlinearLeastSquares.Calculate(joined);
-            var terminal = db.Terminals.FirstOrDefault(t => t.TerminalId == data.terminalid);
-            db.Points.Add(new DB.Point()
+            if (result != null)
             {
-                TerminalId = terminal.Id,
-                Latitude = result.latitude,
-                Longitude = result.longitude,
-                LogDate = DateTime.Parse(data.logdate)
-            });
-            db.SaveChanges();
-
+                var terminal = db.Terminals.FirstOrDefault(t => t.TerminalId == data.terminalid);
+                db.Points.Add(new DB.Point()
+                {
+                    TerminalId = terminal.Id,
+                    Latitude = result.latitude,
+                    Longitude = result.longitude,
+                    LogDate = DateTime.Parse(data.logdate)
+                });
+                db.SaveChanges();
+            }
+            
             return Ok();
         }
 
