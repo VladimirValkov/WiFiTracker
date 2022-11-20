@@ -94,12 +94,12 @@ namespace WiFiTracker.Controllers
                     joined.Remove(item);
                 }
             }
+            dbLog("api/addpoint/joined", joined);
             if (joined.Count < 3)
             {
                 return Ok();
             }
-
-            dbLog("api/addpoint/joined", joined);
+            
             var result = NonlinearLeastSquares.Calculate(joined);
             if (result != null)
             {
