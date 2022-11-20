@@ -7,9 +7,7 @@
                 @foreach (var item in Model.data)
                 {
                     <div class="col-md-auto">
-                        <button type="button" onclick="CenterMarker(@item.Latitude.Replace(',','.'), @item.Longitude.Replace(',','.'))" class="btn btn-outline-primary">
-                            <p style="color:red">@item.TerminalId</p> 
-                        </button>
+                        <button type="button" onclick="CenterMarker(@item.Latitude.Replace(',','.'), @item.Longitude.Replace(',','.'))" class="btn btn-outline-primary">@item.TerminalId</button>
                     </div>
                 }
 
