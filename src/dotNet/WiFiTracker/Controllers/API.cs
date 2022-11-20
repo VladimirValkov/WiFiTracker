@@ -38,13 +38,8 @@ namespace WiFiTracker.Controllers
         {
 
             PointData data = JsonSerializer.Deserialize<PointData>(body.GetRawText());
-            db.Logs.Add(new Log()
-            {
-                Date = DateTime.Now,
-                Type = "api/addpoint",
-                Content = body.GetRawText()
-            });
-            db.SaveChanges();
+            dbLog("api/addpoint", body.GetRawText());
+
             if (data == null)
             {
                 return BadRequest(new Error() { Message = "Data is not presented." });
@@ -92,6 +87,19 @@ namespace WiFiTracker.Controllers
                 }
             }).Where(x => x != null).ToList();
 
+            foreach (var item in joined)
+            {
+                if (item.distance > 50)
+                {
+                    joined.Remove(item);
+                }
+            }
+            if (joined.Count < 3)
+            {
+                return Ok();
+            }
+
+            dbLog("api/addpoint/joined", joined);
             var result = NonlinearLeastSquares.Calculate(joined);
             if (result != null)
             {
@@ -109,5 +117,26 @@ namespace WiFiTracker.Controllers
             return Ok();
         }
 
+
+        private void dbLog<T>(string type, T content)
+        {
+            string contentData = "";
+            if (typeof(T) == typeof(string))
+            {
+                contentData = content.ToString();
+            }
+            else
+            {
+               contentData = JsonSerializer.Serialize(content, typeof(T));
+            }
+
+            db.Logs.Add(new Log()
+            {
+                Date = DateTime.Now,
+                Type = type,
+                Content = contentData
+            }) ;
+            db.SaveChanges();
+        }
     }
 }

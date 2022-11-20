@@ -1,0 +1,43 @@
+﻿@model LiveViewModel
+
+<div class="container">
+    <div class="row mt-4">
+        <div class="col">
+            <div class="row justify-content-md-center ">
+                @foreach (var item in Model.data)
+                {
+                    <div class="col-md-auto">
+                        <button type="button" onclick="CenterMarker(@item.Latitude.Replace(',','.'), @item.Longitude.Replace(',','.'))" class="btn btn-outline-primary">
+                            <p style="color:red">@item.TerminalId</p> 
+                        </button>
+                    </div>
+                }
+
+            </div>
+        </div>
+        <div class="col-auto align-self-end">
+            <div class="row justify-content-md-end">
+                <button type="button" class="btn btn-outline-primary" onclick="window.location.reload();">Refresh</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+<div id="mapComponent" style="width:100%;height:600px" class="mt-5">
+
+</div>
+
+<script>
+    window.addEventListener('load', (event) => {
+        const data = []
+    @foreach (var item in Model.data)
+    {
+         @:data.push({ lat: parseFloat(@item.Latitude.Replace(',','.')), lon: parseFloat(@item.Longitude.Replace(',','.')), name: '@item.TerminalId - @item.LastDate' });
+    }
+        LiveView('mapComponent', data);
+    });
+</script>

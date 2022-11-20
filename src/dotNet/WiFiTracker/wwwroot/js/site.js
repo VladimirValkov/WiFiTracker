@@ -104,3 +104,23 @@ function TrackHistory(contrainerId, data) {
 
     flightPath.setMap(gMap);
 }
+
+function LiveView(contrainerId, data) {
+    if (data.length > 0) {
+        initializeGMap(contrainerId, data[0].lon, data[0].lat)
+    } else {
+        initializeGMap(contrainerId)
+    }
+
+    gMap.center
+    data.forEach(e => {
+        var l = { lat: e.lat, lng: e.lon }
+        addMarkerToMap(l, e.name)
+    })
+}
+
+function CenterMarker(latitudes, longitutes) {
+    var lnt = new google.maps.LatLng(latitudes, longitutes);
+    gMap.setCenter(lnt)
+    gMap.setZoom(18)
+}
