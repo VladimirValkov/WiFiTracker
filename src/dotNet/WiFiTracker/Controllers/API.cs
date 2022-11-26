@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using WiFiTracker.DB;
@@ -17,6 +20,28 @@ namespace WiFiTracker.Controllers
         {
             db = _db;
         }
+
+        [HttpGet]
+        public IActionResult Reinport(int? fromid, int? toid)
+        {
+            if (fromid == null || fromid == 0 || toid == null || toid == 0)
+            {
+                return BadRequest(new Error() { Message = "ID is not presented." });
+            }
+            var logs = db.Logs.Where(a=>a.Id>=fromid && a.Id <= toid && a.Type == "api/addpoint" && a.Content.Contains("2022-11-26"));
+            using (var web = new HttpClient())
+            {
+                foreach (var log in logs)
+                {
+                    var res = web.PostAsync("http://wifitracker.4every.info/Api/addpoint", new StringContent(log.Content, Encoding.UTF8,"application/json"));
+                    res.Wait();
+                    
+                }
+            }
+
+            return Ok();
+        }
+
         [HttpGet]
         public IActionResult Test(string id)
         {

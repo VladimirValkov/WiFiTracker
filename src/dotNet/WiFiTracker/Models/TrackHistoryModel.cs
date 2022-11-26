@@ -19,6 +19,7 @@ namespace WiFiTracker.Models
         public string DateTo { get; set; }
         public List<MapPin> Result { get; set; }
         public List<Terminal> Terminals { get; set; }
+        public List<Transmitter> Transmitters { get; set; }
 
         public TrackHistoryModel()
         {

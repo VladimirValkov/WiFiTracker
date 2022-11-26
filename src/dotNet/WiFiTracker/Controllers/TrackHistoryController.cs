@@ -27,7 +27,7 @@ namespace WiFiTracker.Controllers
             var data = new TrackHistoryModel()
             {
                 Terminals = db.Terminals.ToList(),
-
+                Transmitters = db.Transmitters.ToList()
             };
             return View(data);
         }
@@ -45,6 +45,7 @@ namespace WiFiTracker.Controllers
                     
                 }).ToList();
             data.Terminals = db.Terminals.ToList();
+            data.Transmitters = db.Transmitters.ToList();
             return View(data);
         }
     }

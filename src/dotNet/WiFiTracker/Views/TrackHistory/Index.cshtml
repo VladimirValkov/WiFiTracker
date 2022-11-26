@@ -82,7 +82,14 @@
                 @:data.push({ lat: parseFloat(@row.Latitude.Replace(',','.')), lon: parseFloat(@row.Longitude.Replace(',','.')), name: '@row.Name' });
             }
 
+
+
         TrackHistory('mapComponent', data);
+
+        @foreach (var transmitter in Model.Transmitters)
+        {
+            @:addMarkerToMap(new google.maps.LatLng(@transmitter.Latitude.ToString().Replace(',', '.'), @transmitter.Longitude.ToString().Replace(',', '.')), '@transmitter.Name', true);
+        }
     });
 </script>
 
