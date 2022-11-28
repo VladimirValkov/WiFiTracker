@@ -2,9 +2,16 @@
     <!-- Base application theme. -->
     <style name="Theme.WiFiLogger" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/ic_launcher_background</item>
         <item name="colorPrimaryDark">@color/purple_700</item>
         <item name="colorAccent">@color/teal_200</item>
+        <item name="android:buttonStyle">@style/MyButton</item>
+        <item name="android:windowBackground">@drawable/appbackground</item>
         <!-- Customize your theme here. -->
+    </style>
+    <style name="MyButton" parent="@style/Widget.AppCompat.Button">
+        <item name="android:background">@drawable/buttonbackground</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="elevation">20dp</item>
     </style>
 </resources>
