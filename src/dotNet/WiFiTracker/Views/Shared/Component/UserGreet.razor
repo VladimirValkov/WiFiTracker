@@ -1,0 +1,21 @@
+﻿@inject UserStateService user
+@inject NavigationManager nav
+
+
+@if (user.CurrentUser != null)
+{
+	<RadzenText Text=@($"Hello, {user.CurrentUser.UserName} / {user.CurrentAccount.Name}")/>
+	<RadzenLink @onclick=@(()=>{user.Logout(); nav.NavigateTo("", true);}) class="text-white" Text="Logout" />
+}
+else
+{
+	<RadzenLink @onclick=@(()=>{user.Logout(); nav.NavigateTo("", true);}) class="text-white" Text="Login" />
+	<RadzenLink @onclick=@(()=>{user.Logout(); nav.NavigateTo("", true);}) class="text-white" Text="Register" />
+}
+
+
+
+
+@code {
+
+}

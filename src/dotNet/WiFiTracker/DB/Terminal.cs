@@ -21,6 +21,8 @@ namespace WiFiTracker.DB
         [Required]
         public string Name { get; set; }
 
+        public int AccoundId { get; set; }
+
 
     }
 }

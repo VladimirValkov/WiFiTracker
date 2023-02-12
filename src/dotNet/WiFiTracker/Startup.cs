@@ -6,11 +6,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Radzen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WiFiTracker.DB;
+using WiFiTracker.Services;
 
 namespace WiFiTracker
 {
@@ -34,13 +36,20 @@ namespace WiFiTracker
                     .UseMySql(connectionString, serverVersion)
                     // The following three options help with debugging, but should
                     // be changed or removed for production.
-                    .LogTo(Console.WriteLine, LogLevel.Information)
-                    .EnableSensitiveDataLogging()
-                    .EnableDetailedErrors()
+                    //.LogTo(Console.WriteLine, LogLevel.Information)
+                    //.EnableSensitiveDataLogging()
+                    //.EnableDetailedErrors()
             );
+			services.AddRazorPages();
+			services.AddServerSideBlazor();
 
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
-            //services.AddRazorPages().AddRazorRunTimeCompilation();
+
+            services.AddSingleton<LanguageService>();
+            services.AddScoped<UserStateService>();
+            services.AddScoped<DialogService>();
+            services.AddScoped<NotificationService>();
+            services.AddControllersWithViews();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,21 +66,25 @@ namespace WiFiTracker
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                ServeUnknownFileTypes = true
-            }) ;
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    ServeUnknownFileTypes = true
+            //}) ;
+            app.UseStaticFiles();
 
             app.UseRouting();
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
+
+			app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
+				
+				endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-            });
+				endpoints.MapBlazorHub();
+			});
         }
     }
 }

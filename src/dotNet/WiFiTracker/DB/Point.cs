@@ -18,5 +18,7 @@ namespace WiFiTracker.DB
         public DateTime LogDate { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
+        public int AccoundId { get; set; }
+
     }
 }

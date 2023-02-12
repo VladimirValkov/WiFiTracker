@@ -1,0 +1,16 @@
+﻿@inject LanguageService ls;
+@inject NavigationManager nav
+
+<RadzenSelectBar @bind-Value="ls.lang" TValue="LanguageService.Languages" Change="OnLanguageChange">
+    <Items>
+        <RadzenSelectBarItem Image="./img/en.png" ImageStyle="height:30px" Value="LanguageService.Languages.en" />
+        <RadzenSelectBarItem Image="./img/bg.png" ImageStyle="height:30px" Value="LanguageService.Languages.bg" />
+    </Items>
+</RadzenSelectBar>
+
+@code{
+    public void OnLanguageChange()
+    {
+        nav.NavigateTo(nav.Uri, true);
+    }
+}

@@ -1,6 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@inject LanguageService ls
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
+    <base href="~/" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WiFiTracker</title>
@@ -19,7 +22,7 @@
                 <div class="collapse navbar-collapse" id="navbarColor01">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">@ls.get(LanguageService.Words.Home)</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Terminals" asp-action="Index">Terminals</a>
@@ -42,27 +45,23 @@
                             </div>
                         </li>
 
-                        @*<li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Separated link</a>
-                    </div>
-                </li>*@
+                        
+
+
                     </ul>
-                    @*<form class="d-flex">
-                <input class="form-control me-sm-2" type="text" placeholder="Search">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-            </form>*@
+                    <div class="me-2">
+                        @(await Html.RenderComponentAsync<UserGreet>(RenderMode.Server))
+                    </div>
+                    <div>
+                        @(await Html.RenderComponentAsync<LanguageSelector>(RenderMode.Server))
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @(await Html.RenderComponentAsync<Main>(RenderMode.Server))
             @RenderBody()
         </main>
     </div>
@@ -73,6 +72,7 @@
         </div>
     </footer>
 
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.9/jquery.datetimepicker.min.css" />
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.9/jquery.datetimepicker.full.min.js"></script>
@@ -80,8 +80,12 @@
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&key=AIzaSyAWyld1wzweNX9_NZg-QEvR8qfQiBnKRXU" type="text/javascript"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/material-base.css">
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+    
 
     @RenderSection("Scripts", required: false)
+
+    <script src="_framework/blazor.server.js"></script>
 </body>
 </html>

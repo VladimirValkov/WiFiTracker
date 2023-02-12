@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WiFiTracker.DB;
 
+#nullable disable
+
 namespace WiFiTracker.Migrations
 {
     [DbContext(typeof(MainDB))]
@@ -14,13 +16,35 @@ namespace WiFiTracker.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.17");
+                .HasAnnotation("ProductVersion", "6.0.13")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("WiFiTracker.DB.Account", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("AccountLoginId")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Accounts");
+                });
 
             modelBuilder.Entity("WiFiTracker.DB.Log", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("AccoundId")
                         .HasColumnType("int");
 
                     b.Property<string>("Content")
@@ -42,6 +66,10 @@ namespace WiFiTracker.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("AccoundId")
                         .HasColumnType("int");
 
                     b.Property<double>("Latitude")
@@ -65,13 +93,19 @@ namespace WiFiTracker.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("AccoundId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("TerminalId")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
@@ -84,6 +118,10 @@ namespace WiFiTracker.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("AccoundId")
                         .HasColumnType("int");
 
                     b.Property<string>("Bssid")
@@ -103,6 +141,69 @@ namespace WiFiTracker.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Transmitters");
+                });
+
+            modelBuilder.Entity("WiFiTracker.DB.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("AccoundId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserRoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("WiFiTracker.DB.UserRoles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("AccoundId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("AllowDownloadApp")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("AllowReportLiveView")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("AllowReportTrackHistory")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("AllowTerminals")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("AllowTransmitters")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
