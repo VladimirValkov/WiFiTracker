@@ -76,12 +76,15 @@ namespace WiFiTracker.Services
 			CurrentUser = null;
 			CurrentUserRole = null;
 
-			if (http.HttpContext.User.Identity.IsAuthenticated)
+			if (http.HttpContext?.User?.Identity?.IsAuthenticated == true)
             {
                 var user_id = http.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                CurrentUser = db.Users.FirstOrDefault(a => a.Id == int.Parse(user_id));
-                CurrentAccount = db.Accounts.FirstOrDefault(a => a.Id == CurrentUser.AccoundId);
-				CurrentUserRole = db.UserRoles.FirstOrDefault(a => a.Id == CurrentUser.UserRoleId);
+                if (user_id != null)
+                {
+                    CurrentUser = db.Users.FirstOrDefault(a => a.Id == int.Parse(user_id));
+                    CurrentAccount = db.Accounts.FirstOrDefault(a => a.Id == CurrentUser.AccoundId);
+                    CurrentUserRole = db.UserRoles.FirstOrDefault(a => a.Id == CurrentUser.UserRoleId);
+                }
             }
         }
     }
