@@ -1,4 +1,5 @@
-﻿@inject UserStateService user
+﻿@using System.Security.Claims;
+@inject UserStateService user
 @inject NavigationManager nav
 @inject DialogService dialog
 @inject LanguageService ls
@@ -25,10 +26,14 @@ else
 
 
 @code {
+	[Parameter]
+	public string claim { get; set; }
+
 	bool userLogged = false;
 	protected override void OnInitialized()
 	{
-		user.LoadLoggedUserData();
+		
+		user.LoadLoggedUserData(claim);
 		userLogged = user.CurrentUser != null;
 	}
 }

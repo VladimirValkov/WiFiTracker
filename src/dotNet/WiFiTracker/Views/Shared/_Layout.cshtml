@@ -1,4 +1,5 @@
 ﻿@inject LanguageService ls
+@inject UserStateService user
 
 <!DOCTYPE html>
 <html lang="en">
@@ -51,7 +52,10 @@
             
                     </ul>
                     <div class="me-2">
-                        @(await Html.RenderComponentAsync<UserGreet>(RenderMode.Server))
+                       
+                        @(await Html.RenderComponentAsync<UserGreet>(RenderMode.Server, new { claim = Context.User.FindFirstValue(ClaimTypes.NameIdentifier) }))
+                        
+                       
                     </div>
                     <div>
                         @(await Html.RenderComponentAsync<LanguageSelector>(RenderMode.Server))

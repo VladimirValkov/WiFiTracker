@@ -70,21 +70,18 @@ namespace WiFiTracker.Services
             CurrentUserRole = null;
         }
 
-        public void LoadLoggedUserData()
+        public void LoadLoggedUserData(string user_id)
         {
 			CurrentAccount = null;
 			CurrentUser = null;
 			CurrentUserRole = null;
 
-			if (http.HttpContext?.User?.Identity?.IsAuthenticated == true)
+			
+            if (user_id != null)
             {
-                var user_id = http.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (user_id != null)
-                {
-                    CurrentUser = db.Users.FirstOrDefault(a => a.Id == int.Parse(user_id));
-                    CurrentAccount = db.Accounts.FirstOrDefault(a => a.Id == CurrentUser.AccoundId);
-                    CurrentUserRole = db.UserRoles.FirstOrDefault(a => a.Id == CurrentUser.UserRoleId);
-                }
+                CurrentUser = db.Users.FirstOrDefault(a => a.Id == int.Parse(user_id));
+                CurrentAccount = db.Accounts.FirstOrDefault(a => a.Id == CurrentUser.AccoundId);
+                CurrentUserRole = db.UserRoles.FirstOrDefault(a => a.Id == CurrentUser.UserRoleId);
             }
         }
     }
