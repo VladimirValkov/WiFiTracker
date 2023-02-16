@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,8 @@ using WiFiTracker.Models;
 
 namespace WiFiTracker.Controllers
 {
-    public class TrackHistoryController : Controller
+	[Authorize]
+	public class TrackHistoryController : Controller
     {
         MainDB db;
         public TrackHistoryController(MainDB _db)

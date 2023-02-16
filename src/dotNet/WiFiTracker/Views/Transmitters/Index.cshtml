@@ -1,12 +1,13 @@
 ﻿@model List<Transmitter>
+@inject LanguageService ls
 
 
-<h1>Transmitters</h1>
+<h1>@ls.get(LanguageService.Words.Transmitters)</h1>
 <table class="table table-hover">
     <thead>
         <tr class="table-primary">
             <th scope="col">BSSID</th>
-            <th scope="col">Name</th>
+            <th scope="col">@ls.get(LanguageService.Words.Name)</th>
             <th scope="col">Longitude</th>
             <th scope="col">Latitude</th>
             <th scope="col"></th>
@@ -20,17 +21,17 @@
                 <td>@item.Name</td>
                 <td>@item.Longitude</td>
                 <td>@item.Latitude</td>
-                <td align="right" width="20%">
-                    <a class="btn btn-primary" asp-controller="Transmitters" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                <td align="right" width="30%">
+                    <a class="btn btn-primary" asp-controller="Transmitters" asp-action="Edit" asp-route-id="@item.Id">@ls.get(LanguageService.Words.Edit)</a>
                     <a data-bs-target="#deleteModal" data-bs-toggle="modal" class="btn btn-danger deleteItem"
-                       data-path="@Url.Action("Delete", "Transmitters", new { id = @item.Id })">Delete</a>
+                   data-path="@Url.Action("Delete", "Transmitters", new { id = @item.Id })">@ls.get(LanguageService.Words.Delete)</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<a class="btn btn-primary" asp-controller="Transmitters" asp-action="Add">Add New Transmitter</a>
+<a class="btn btn-primary" asp-controller="Transmitters" asp-action="Add">@ls.get(LanguageService.Words.Add_New_Transmitter)</a>
 
 
 
@@ -38,17 +39,17 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Delete Transmitter</h5>
+                <h5 class="modal-title">@ls.get(LanguageService.Words.Delete) @ls.get(LanguageService.Words.Transmitter)</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true"></span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this transmitter ?</p>
+                <p>@ls.get(LanguageService.Words.Are_You_Sure_Delete) @ls.get(LanguageService.Words.Transmitter) ?</p>
             </div>
             <div class="modal-footer">
-                <button id="btnContinueDelete" type="button" class="btn btn-danger">Delete</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="btnContinueDelete" type="button" class="btn btn-danger">@ls.get(LanguageService.Words.Delete)</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@ls.get(LanguageService.Words.Cancel)</button>
             </div>
         </div>
     </div>

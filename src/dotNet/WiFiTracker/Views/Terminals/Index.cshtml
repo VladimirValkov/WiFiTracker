@@ -1,6 +1,7 @@
 ﻿@model List<Terminal>
+@inject LanguageService ls
 @{
-    ViewData["Title"] = "Terminals";
+    ViewData["Title"] = @ls.get(LanguageService.Words.Terminals);
 }
 <h1>@ViewData["Title"]</h1>
 
@@ -8,8 +9,8 @@
 <table class="table table-hover">
     <thead>
         <tr class="table-primary">
-            <th scope="col">Terminal Id</th>
-            <th scope="col">Name</th>
+            <th scope="col">@ls.get(LanguageService.Words.Terminal) Id</th>
+            <th scope="col">@ls.get(LanguageService.Words.Name)</th>
             <th scope="col"></th>
         </tr>
     </thead>
@@ -19,10 +20,10 @@
             <tr class="table-light">
                 <td>@item.TerminalId</td>
                 <td>@item.Name</td>
-                <td align="right" width="20%">
-                    <a asp-controller="Terminals" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>
+                <td align="right" width="30%">
+                    <a asp-controller="Terminals" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">@ls.get(LanguageService.Words.Edit)</a>
                     <a data-bs-target="#deleteModal" data-bs-toggle="modal" class="btn btn-danger deleteItem"
-                       data-path="@Url.Action("Delete", "Terminals", new { id = @item.Id })">Delete</a>
+                   data-path="@Url.Action("Delete", "Terminals", new { id = @item.Id })">@ls.get(LanguageService.Words.Delete)</a>
 
                 </td>
             </tr>
@@ -32,7 +33,7 @@
     </tbody>
 </table>
 
-<a class="btn btn-primary" asp-controller="Terminals" asp-action="Add">Add New Terminal</a>
+<a class="btn btn-primary" asp-controller="Terminals" asp-action="Add">@ls.get(LanguageService.Words.Add_New_Terminal)</a>
 
 
 
@@ -42,17 +43,18 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Delete Terminal</h5>
+                <h5 class="modal-title">@ls.get(LanguageService.Words.Delete) @ls.get(LanguageService.Words.Terminal)</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true"></span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete this terminal ?</p>
+
+                <p>@ls.get(LanguageService.Words.Are_You_Sure_Delete) @ls.get(LanguageService.Words.Terminal) ?</p>
                 </div>
                 <div class="modal-footer">
-                    <button id="btnContinueDelete" type="button" class="btn btn-danger">Delete</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="btnContinueDelete" type="button" class="btn btn-danger">@ls.get(LanguageService.Words.Delete)</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@ls.get(LanguageService.Words.Cancel)</button>
                 </div>
             </div>
         </div>

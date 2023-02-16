@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -42,7 +43,11 @@ namespace WiFiTracker
             );
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
-
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie();
+            services.AddHttpContextAccessor();
 
             services.AddSingleton<LanguageService>();
             services.AddScoped<UserStateService>();
@@ -66,14 +71,17 @@ namespace WiFiTracker
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            //app.UseStaticFiles(new StaticFileOptions()
-            //{
-            //    ServeUnknownFileTypes = true
-            //}) ;
+
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                ServeUnknownFileTypes = true,
+            });
+            
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

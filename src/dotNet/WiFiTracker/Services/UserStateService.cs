@@ -3,6 +3,11 @@ using System;
 using System.Linq.Dynamic.Core;
 using System.Linq;
 using WiFiTracker.DB;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace WiFiTracker.Services
 {
@@ -13,31 +18,34 @@ namespace WiFiTracker.Services
         public UserRoles CurrentUserRole { get; set; }
 
         private readonly MainDB db;
-        public UserStateService(MainDB _db)
+        private readonly IHttpContextAccessor http;
+        public UserStateService(MainDB _db, IHttpContextAccessor _httpContextAccessor)
         {
             db = _db;
+            http = _httpContextAccessor;
         }
-        public void Register(string accountName, string userName, string password, string email)
+        public string Register(string accountName, string userName, string password, string email)
         {
             var acc = db.Accounts.Add(new Account()
             {
                 Name= accountName,
                 AccountLoginId = Guid.NewGuid().ToString().Substring(0,6),
             });
+            db.SaveChanges();
+            var created_acc = db.Accounts.OrderBy(a=>a.Id).Last();
             var user = db.Users.Add(new User() 
             {
-                AccoundId = acc.Entity.Id,
+                AccoundId = created_acc.Id,
                 UserName = userName,
                 Password = password,
                 Email = email,
                 IsAdmin = true,
             });
             db.SaveChanges();
-
-            Login(userName, password, acc.Entity.AccountLoginId);
+            return created_acc.AccountLoginId;
         }
 
-        public bool Login(string userName, string password, string accountLoginId)
+        public async Task<bool> Login(string userName, string password, string accountLoginId)
         {
             var acc = db.Accounts.FirstOrDefault(a=>a.AccountLoginId == accountLoginId);
             var res = db.Users.FirstOrDefault(a=>a.UserName == userName && a.Password == password && acc.Id == a.AccoundId);
@@ -60,6 +68,21 @@ namespace WiFiTracker.Services
             CurrentAccount = null;
             CurrentUser = null;
             CurrentUserRole = null;
+        }
+
+        public void LoadLoggedUserData()
+        {
+			CurrentAccount = null;
+			CurrentUser = null;
+			CurrentUserRole = null;
+
+			if (http.HttpContext.User.Identity.IsAuthenticated)
+            {
+                var user_id = http.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                CurrentUser = db.Users.FirstOrDefault(a => a.Id == int.Parse(user_id));
+                CurrentAccount = db.Accounts.FirstOrDefault(a => a.Id == CurrentUser.AccoundId);
+				CurrentUserRole = db.UserRoles.FirstOrDefault(a => a.Id == CurrentUser.UserRoleId);
+            }
         }
     }
 }

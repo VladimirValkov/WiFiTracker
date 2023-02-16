@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,16 @@ using WiFiTracker.Models;
 
 namespace WiFiTracker.Controllers
 {
-    public class LiveViewController : Controller
+
+	[Authorize]
+	public class LiveViewController : Controller
     {
         MainDB db;
         public LiveViewController(MainDB _db)
         {
             db = _db;
         }
+
         public IActionResult Index()
         {
             var data = new LiveViewModel();

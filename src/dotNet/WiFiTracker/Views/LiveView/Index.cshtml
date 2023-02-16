@@ -1,4 +1,5 @@
 ﻿@model LiveViewModel
+@inject LanguageService ls
 
 <div class="container">
     <div class="row mt-4">
@@ -15,7 +16,7 @@
         </div>
         <div class="col-auto align-self-end">
             <div class="row justify-content-md-end">
-                <button type="button" class="btn btn-outline-primary" onclick="window.location.reload();">Refresh</button>
+                <button type="button" class="btn btn-outline-primary" onclick="window.location.reload();">@ls.get(LanguageService.Words.Refresh)</button>
             </div>
         </div>
 

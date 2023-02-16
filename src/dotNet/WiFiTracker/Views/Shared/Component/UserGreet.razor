@@ -1,21 +1,34 @@
 ﻿@inject UserStateService user
 @inject NavigationManager nav
+@inject DialogService dialog
+@inject LanguageService ls
 
 
 @if (user.CurrentUser != null)
 {
-	<RadzenText Text=@($"Hello, {user.CurrentUser.UserName} / {user.CurrentAccount.Name}")/>
-	<RadzenLink @onclick=@(()=>{user.Logout(); nav.NavigateTo("", true);}) class="text-white" Text="Logout" />
+	<div class="row me-3">
+		<div class="col">
+			<RadzenText Text=@($"{@ls.get(LanguageService.Words.Hello)}, {user.CurrentUser?.UserName} / {user.CurrentAccount?.AccountLoginId}") class="text-white" />
+		</div>
+		<div class="col-2">
+			<RadzenLink @onclick=@(()=>{nav.NavigateTo("user/logout", true);}) class="text-white" Text="@ls.get(LanguageService.Words.Logout)" />
+		</div>
+	</div>
+	
+	
 }
 else
 {
-	<RadzenLink @onclick=@(()=>{user.Logout(); nav.NavigateTo("", true);}) class="text-white" Text="Login" />
-	<RadzenLink @onclick=@(()=>{user.Logout(); nav.NavigateTo("", true);}) class="text-white" Text="Register" />
+	<RadzenButton Variant="Variant.Text" Click=@(async()=>await dialog.OpenAsync<LoginDialog>("", null, new DialogOptions(){ ShowTitle=false, CloseDialogOnEsc=true, CloseDialogOnOverlayClick=true, AutoFocusFirstElement=true})) class="text-white" Text="@ls.get(LanguageService.Words.Login)" />
+	<RadzenButton Variant="Variant.Text" Click=@(async()=>await dialog.OpenAsync<RegisterDialog>("", null, new DialogOptions(){ ShowTitle=false, CloseDialogOnEsc=true, CloseDialogOnOverlayClick=true, AutoFocusFirstElement=true})) class="text-white" Text="@ls.get(LanguageService.Words.Register)" />
 }
 
 
 
 
 @code {
-
+	protected override void OnInitialized()
+	{
+		user.LoadLoggedUserData();
+	}
 }

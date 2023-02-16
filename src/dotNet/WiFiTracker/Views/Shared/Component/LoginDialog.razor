@@ -1,22 +1,58 @@
-﻿<h3>Login</h3>
+﻿@inject UserStateService userstate
+@inject NavigationManager nav
+@inject LanguageService ls
+
+<h3>@ls.get(LanguageService.Words.Login)</h3>
 
 
 <RadzenCard class="my-5 mx-auto" Style="max-width: 400px;">
-<RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Account Login Number:</RadzenText>
-<RadzenTextBox @bind-Value=@AccLoginId Style="width: 100%;" />
-<RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" class="mt-4">UserName</RadzenText>
-<RadzenTextBox @bind-Value=@UserName Style="width: 100%;" />
-<RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" class="mt-4">Password</RadzenText>
-<RadzenTextBox @bind-Value=@Password Style="width: 100%;" />
-<div class="row">
-    <div class="col-md-12 d-flex align-items-end justify-content-left mt-4">
-        <RadzenButton ButtonType="ButtonType.Submit" Text="Login" />
-    </div>
-</div>
+    <RadzenTemplateForm TItem="LoginModel" Data="loginmodel" Submit=OnLogin >
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">@ls.get(LanguageService.Words.Acc_Login_Number):</RadzenText>
+        <RadzenTextBox Name="AccId" @bind-Value=@loginmodel.AccLoginId Style="width: 100%;" />
+        <RadzenRequiredValidator Component="AccId" Text="@ls.get(LanguageService.Words.Field_Required)" />
+        <RadzenLengthValidator Max=6 Component="AccId" Text=@($"{ls.get(LanguageService.Words.This_Field)} {ls.get(LanguageService.Words.shouldnt_be_more_than)} 6 {ls.get(LanguageService.Words.Characters)}") />
+        
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" class="mt-4">@ls.get(LanguageService.Words.UserName)</RadzenText>
+        <RadzenTextBox Name="Username" @bind-Value=@loginmodel.UserName Style="width: 100%;" />
+        <RadzenRequiredValidator Component="Username" Text="@ls.get(LanguageService.Words.Field_Required)" />
+        <RadzenLengthValidator Max=20 Component="Username" Text=@($"{ls.get(LanguageService.Words.This_Field)} {ls.get(LanguageService.Words.shouldnt_be_more_than)} 20 {ls.get(LanguageService.Words.Characters)}") />
+        
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" class="mt-4">@ls.get(LanguageService.Words.Password)</RadzenText>
+        <RadzenPassword Name="Password" @bind-Value=@loginmodel.Password Style="width: 100%;" />
+        <RadzenRequiredValidator Component="Password" Text="@ls.get(LanguageService.Words.Field_Required)" />
+        
+        <div class="row">
+            <div class="col-md-12 d-flex align-items-end justify-content-left mt-4">
+                <RadzenButton ButtonType="ButtonType.Submit" Text="@ls.get(LanguageService.Words.Login)" />
+            </div>
+        </div>
+        <RadzenLabel Text=@loginerror class="text-danger"></RadzenLabel>
+    </RadzenTemplateForm>
+
 </RadzenCard>
 
 @code{
-    public string AccLoginId { get; set; }
-    public string UserName { get; set; }
-    public string Password{ get; set; }
+    public class LoginModel
+    {
+        public string AccLoginId { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+    }
+
+    LoginModel loginmodel = new LoginModel();
+    string loginerror = "";
+
+    public async Task OnLogin(LoginModel loginform)
+    {
+        loginerror = "";
+        if (await userstate.Login(loginform.UserName, loginform.Password, loginform.AccLoginId))
+        {
+            nav.NavigateTo($"user/login?accountid={loginform.AccLoginId}&username={loginform.UserName}&password={loginform.Password}", true);
+        }
+        else
+        {
+            loginerror = @ls.get(LanguageService.Words.Login_Error);
+        }
+        
+    }
 }

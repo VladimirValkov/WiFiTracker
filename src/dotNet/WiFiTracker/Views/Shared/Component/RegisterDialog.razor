@@ -1,0 +1,61 @@
+﻿@inject UserStateService userstate
+@inject NavigationManager nav
+@inject LanguageService ls
+
+<h3>@ls.get(LanguageService.Words.Register)</h3>
+
+<RadzenCard class="my-5 mx-auto" Style="max-width: 400px;">
+    <RadzenTemplateForm Submit="OnRegister" Data=registermodel TItem="RegisterModel">
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">@ls.get(LanguageService.Words.Account) @ls.get(LanguageService.Words.Name)</RadzenText>
+        <RadzenTextBox @bind-Value=@registermodel.AccountName Name="AccName" Style="width: 100%;" />
+        <RadzenRequiredValidator Component="AccName" Text="@ls.get(LanguageService.Words.Field_Required)" />
+        <RadzenLengthValidator Max=20 Component="AccName" Text=@($"{ls.get(LanguageService.Words.This_Field)} {ls.get(LanguageService.Words.shouldnt_be_more_than)} 20 {ls.get(LanguageService.Words.Characters)}") />
+
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" class="mt-4" Text=@($"Admin {@ls.get(LanguageService.Words.Email)}")/>
+        <RadzenTextBox Name="Email" @bind-Value=registermodel.Email Style=" width: 100%;" />
+        <RadzenEmailValidator Component="Email" Text="@ls.get(LanguageService.Words.Enter_Valid_Email)" />
+
+        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" class="mt-4">@($"Admin  {@ls.get(LanguageService.Words.UserName)}")</RadzenText>
+        <RadzenTextBox Name="Username" @bind-Value=@registermodel.UserName Style="width: 100%;" />
+        <RadzenRequiredValidator Component="Username" Text="@ls.get(LanguageService.Words.Field_Required)" />
+        <RadzenLengthValidator Max=20 Component="Username" Text=@($"{ls.get(LanguageService.Words.This_Field)} {ls.get(LanguageService.Words.shouldnt_be_more_than)} 20 {ls.get(LanguageService.Words.Characters)}") />
+
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" class="mt-4"> @ls.get(LanguageService.Words.Password)</RadzenText>
+        <RadzenPassword Name="Password1" @bind-Value=@registermodel.Password Style="width: 100%;" />
+        <RadzenRequiredValidator Component="Password1" Text="@ls.get(LanguageService.Words.Field_Required)" />
+
+            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3" class="mt-4"> @ls.get(LanguageService.Words.Repeat) @ls.get(LanguageService.Words.Password)}</RadzenText>
+        <RadzenPassword Name="RepeatPassword" @bind-Value=@registermodel.Password2 Style="width: 100%;" />
+        <RadzenRequiredValidator Component="RepeatPassword" Text="@ls.get(LanguageService.Words.Field_Required)" />
+        <RadzenCompareValidator Visible=@(!string.IsNullOrEmpty(registermodel.Password2)) Value="registermodel.Password" Component="RepeatPassword" Text="@ls.get(LanguageService.Words.Passwords_should_same)" />
+
+
+        <div class="row">
+            <div class="col-md-12 d-flex align-items-end justify-content-left mt-4">
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Register" />
+            </div>
+        </div>
+    </RadzenTemplateForm>
+</RadzenCard>
+
+@code {
+    public class RegisterModel
+    {
+        public string AccountName { get; set; }
+        public string Email { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string Password2 { get; set; }
+    }
+
+    RegisterModel registermodel = new RegisterModel();
+
+
+    public void OnRegister(RegisterModel registerform)
+    {
+        string AccLoginId = userstate.Register(registerform.AccountName, registerform.UserName, registerform.Password, registerform.Email);
+			
+        nav.NavigateTo($"user/login?accountid={AccLoginId}&username={registerform.UserName}&password={registerform.Password}", true);
+    }
+
+}

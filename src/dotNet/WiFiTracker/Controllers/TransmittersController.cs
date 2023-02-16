@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,8 @@ using WiFiTracker.Models;
 
 namespace WiFiTracker.Controllers
 {
-    public class TransmittersController : Controller
+	[Authorize]
+	public class TransmittersController : Controller
     {
         MainDB db;
         public TransmittersController(MainDB _db)

@@ -6,16 +6,17 @@
     <base href="~/" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WiFiTracker</title>
+    <title>@ViewData["Title"] -  @ls.get(LanguageService.Words.WiFiTracker)</title>
     <link rel="stylesheet" href="~/css/Bootswatch theme.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
+    @(await Html.RenderComponentAsync<Main>(RenderMode.Server))
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <div class="container-fluid">
-                <img class="navbar-brand" src="~/img/logo.png" alt="Logo" width="50" height="50"></img>
-                <a class="navbar-brand">WiFiTracker</a>
+                <img class="navbar-brand" src="~/img/logo.png" alt="Logo" width="50" height="50"/>
+                <a class="navbar-brand">@ls.get(LanguageService.Words.WiFiTracker)</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -24,30 +25,30 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">@ls.get(LanguageService.Words.Home)</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Terminals" asp-action="Index">Terminals</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Transmitters" asp-action="Index">Transmitters</a>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Reports</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" asp-area="" asp-controller="LiveView" asp-action="Index">Live View</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="TrackHistory" asp-action="Index">Track History</a>
-                            </div>
-                        </li>
+                        @if (Context.User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Terminals" asp-action="Index">@ls.get(LanguageService.Words.Terminals)</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Transmitters" asp-action="Index">@ls.get(LanguageService.Words.Transmitters)</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@ls.get(LanguageService.Words.Reports)</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-area="" asp-controller="LiveView" asp-action="Index">@ls.get(LanguageService.Words.Live_View)</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="TrackHistory" asp-action="Index">@ls.get(LanguageService.Words.Track_History)</a>
+                                </div>
+                            </li>
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Applications</a>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="./wifitracker.apk">Download Android Logger App</a>
-                            </div>
-                        </li>
-
-                        
-
-
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@ls.get(LanguageService.Words.Applications)</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="./wifitracker.apk">@ls.get(LanguageService.Words.Download_Android_App)</a>
+                                </div>
+                            </li>
+                        }
+            
                     </ul>
                     <div class="me-2">
                         @(await Html.RenderComponentAsync<UserGreet>(RenderMode.Server))
@@ -61,7 +62,6 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
-            @(await Html.RenderComponentAsync<Main>(RenderMode.Server))
             @RenderBody()
         </main>
     </div>
