@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using WiFiTracker.DB;
 using WiFiTracker.Models;
+using WiFiTracker.Services;
 
 namespace WiFiTracker.Controllers
 {
@@ -14,19 +16,23 @@ namespace WiFiTracker.Controllers
 	public class TransmittersController : Controller
     {
         MainDB db;
-        public TransmittersController(MainDB _db)
+		UserStateService user;
+		public TransmittersController(MainDB _db, UserStateService _user)
         {
             db = _db;
-        }
+			user = _user;
+		}
         private Transmitter MapDataToDb(TransmitterData data)
         {
-            char seperator = Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+			user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+			char seperator = Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator);
             return new Transmitter() {
                 Id = data.Id,
                 Bssid = data.Bssid,
                 Name = data.Name,
                 Latitude = Convert.ToDouble(data.Latitude.Replace(',', seperator).Replace('.', seperator)),
                 Longitude = Convert.ToDouble(data.Longitude.Replace(',', seperator).Replace('.', seperator)),
+                AccoundId = user.CurrentUser.AccoundId
             };
         }
         private TransmitterData DbToMapData(Transmitter data)
@@ -42,7 +48,8 @@ namespace WiFiTracker.Controllers
         }
         public IActionResult Index()
         {
-            return View(db.Transmitters.ToList());
+			user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+			return View(db.Transmitters.Where(a=>a.AccoundId == user.CurrentUser.AccoundId).ToList());
         }
 
         public IActionResult Add()
@@ -58,7 +65,7 @@ namespace WiFiTracker.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Add(TransmitterData data)
         {
-            if (ModelState.IsValid)
+			if (ModelState.IsValid)
             {
                 db.Transmitters.Add(MapDataToDb(data));
                 db.SaveChanges();

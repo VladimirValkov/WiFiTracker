@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WiFiTracker.DB;
 using WiFiTracker.Models;
+using WiFiTracker.Services;
 
 namespace WiFiTracker.Controllers
 {
@@ -14,18 +16,22 @@ namespace WiFiTracker.Controllers
 	public class LiveViewController : Controller
     {
         MainDB db;
-        public LiveViewController(MainDB _db)
+		UserStateService user;
+		public LiveViewController(MainDB _db, UserStateService _user)
         {
             db = _db;
+            user = _user;
         }
 
         public IActionResult Index()
         {
-            var data = new LiveViewModel();
+			user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+			var data = new LiveViewModel();
+            var terminals = db.Terminals.Where(a => a.AccoundId == user.CurrentUser.AccoundId).ToList();
             data.data = db.Points.AsEnumerable()
                 .GroupBy(a => a.TerminalId)
                 .Select((p, g) => p.OrderBy(d => d.LogDate).Last())
-                .Join(db.Terminals, p => p.TerminalId, t => t.Id, (p, t) => new LiveViewModel.LiveTerminalData()
+                .Join(terminals, p => p.TerminalId, t => t.Id, (p, t) => new LiveViewModel.LiveTerminalData()
                 {
                     TerminalId = t.Name,
                     LastDate = p.LogDate.ToString("dd.MM.yyyy HH:mm:ss"),

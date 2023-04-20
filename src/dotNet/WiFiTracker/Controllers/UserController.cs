@@ -35,7 +35,7 @@ namespace WiFiTracker.Controllers
                 await HttpContext.SignInAsync(claimsPrincipal);
             }
             var url = (HttpContext.Request.IsHttps == true ? "https://" : "http://") + HttpContext.Request.Host.Value + "/";
-            return LocalRedirect("~/");
+            return LocalRedirect("/");
         }
 
         [Authorize]
@@ -43,7 +43,7 @@ namespace WiFiTracker.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
-            return LocalRedirect("~/");
+            return LocalRedirect("/");
         }
     }
 }
