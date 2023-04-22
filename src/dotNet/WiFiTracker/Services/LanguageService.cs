@@ -52,7 +52,20 @@ namespace WiFiTracker.Services
 			Account,
             Enter_Valid_Email,
             Passwords_should_same,
-			Email
+			Email,
+			Admin_page,
+			Allow_Terminals,
+			Allow_Transmitters,
+			Allow_Report_LiveView,
+			Allow_Report_TrackHistory,
+			Allow_DownloadApp,
+			Add_New_UserRole,
+			UserRole,
+			UserRoles,
+			Users,
+			Admin,
+			Add_New_User,
+			User,
         }
 
 		//All supported languages
@@ -110,7 +123,20 @@ namespace WiFiTracker.Services
 			{Words.Enter_Valid_Email, "Enter a valid email" },
 			{Words.Passwords_should_same, "Passwords should be the same" },
 			{Words.Email, "Email" },
-		};
+			{Words.Admin_page, "Admin Page" },
+			{Words.Allow_Terminals, "Allow Terminals" },
+			{Words.Allow_Transmitters, "Allow Transmitters" },
+			{Words.Allow_Report_LiveView, "Allow Live View" },
+			{Words.Allow_Report_TrackHistory, "Allow Track History" },
+			{Words.Allow_DownloadApp, "Allow Download App" },
+			{Words.Add_New_UserRole, "Add New UserRole" },
+			{Words.UserRole, "UserRole" },
+			{Words.UserRoles, "UserRoles" },
+			{Words.Users, "Users" },
+			{Words.Admin, "Admin" },
+			{Words.Add_New_User, "Add New User" },
+            {Words.User, "User" },
+        };
 
 		//Bulgarian Translations
 		private Dictionary<Words, string> bg = new Dictionary<Words, string>
@@ -160,7 +186,19 @@ namespace WiFiTracker.Services
             {Words.Enter_Valid_Email, "Въведете валиден имейл адрес" },
             {Words.Passwords_should_same, "Паролата трябва да съвпада" },
             {Words.Email, "Имейл адрес" },
-			
+			{Words.Admin_page, "Admin панел" },
+            {Words.Allow_Terminals, "Позволи Терминали" },
+            {Words.Allow_Transmitters, "Позволи Предаватели" },
+            {Words.Allow_Report_LiveView, "Позволи На Живо" },
+            {Words.Allow_Report_TrackHistory, "Позволи История на проследяване" },
+            {Words.Allow_DownloadApp, "Позволи Теглене на приложението" },
+            {Words.Add_New_UserRole, "Добави Нова Роля" },
+            {Words.UserRole, "Потребителска роля" },
+            {Words.UserRoles, "Потребителски роли" },
+			{Words.Users, "Потребители" },
+			{Words.Admin, "Admin" },
+            {Words.Add_New_User, "Добави Нов Потребител" },
+            {Words.User, "Потребител" },
         };
 
 		//Default Language

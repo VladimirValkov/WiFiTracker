@@ -1,0 +1,31 @@
+﻿@using System.Security.Claims;
+@inject UserStateService user
+@inject NavigationManager nav
+@inject DialogService dialog
+@inject LanguageService ls
+
+@if (userIsAdmin)
+{
+	<li class="nav-item dropdown">
+		<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">@ls.get(LanguageService.Words.Admin_page)</a>
+		<div class="dropdown-menu">
+			<RadzenLink @onclick=@(()=>{nav.NavigateTo("UserRoles/", true);}) class="text-dark nav-link" Text="@ls.get(LanguageService.Words.UserRoles)" />
+		</div>
+	</li>
+	<li class="nav-item">
+		
+	</li>
+}
+
+@code {
+	[Parameter]
+	public string claim { get; set; }
+
+	bool userIsAdmin = false;
+	protected override void OnInitialized()
+	{
+
+		user.LoadLoggedUserData(claim);
+		userIsAdmin = user.CurrentUser.IsAdmin;
+	}
+}

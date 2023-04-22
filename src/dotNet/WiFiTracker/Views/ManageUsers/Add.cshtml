@@ -1,0 +1,52 @@
+﻿@model ManageUsersModel
+@inject LanguageService ls
+
+    <form class="mt-2" method="post">
+        <fieldset>
+            <legend>@ls.get(LanguageService.Words.Add_New_User)</legend>
+
+            <div class="form-group">
+                <label class="form-label mt-4" for="inputValid">@ls.get(LanguageService.Words.UserName):</label>
+                <input type="text" placeholder="@ls.get(LanguageService.Words.UserName)" class="form-control" id="inputValid" asp-for="UserName">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label mt-4" for="inputValid">@ls.get(LanguageService.Words.Password):</label>
+                <input type="password" class="form-control" asp-for="Password">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label mt-4" for="inputValid">@ls.get(LanguageService.Words.Email):</label>
+                <input type="email" class="form-control" asp-for="Email">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label mt-4" for="inputValid">@ls.get(LanguageService.Words.UserRole):</label>
+                <input type="number" class="form-control" asp-for="UserRoleId">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label mt-4" for="inputValid">@ls.get(LanguageService.Words.Admin):</label>
+                <input type="checkbox" class="form-check-input align-middle" asp-for="IsAdmin">
+            </div>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary mr-3">@ls.get(LanguageService.Words.Save)</button>
+                &nbsp;&nbsp;&nbsp;
+            <a class="btn btn-warning " asp-controller="ManageUsers" asp-action="Index">@ls.get(LanguageService.Words.Cancel)</a>
+            </div>
+
+
+        </fieldset>
+    </form>
+
+
+
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

@@ -28,6 +28,8 @@
                         </li>
                         @if (Context.User.Identity.IsAuthenticated)
                         {
+                            @(await Html.RenderComponentAsync<AdminNav>(RenderMode.Server, new { claim = Context.User.FindFirstValue(ClaimTypes.NameIdentifier) }))
+
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Terminals" asp-action="Index">@ls.get(LanguageService.Words.Terminals)</a>
                             </li>
