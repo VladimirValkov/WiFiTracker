@@ -66,6 +66,7 @@ namespace WiFiTracker.Services
 			Admin,
 			Add_New_User,
 			User,
+			ManageUsers,
         }
 
 		//All supported languages
@@ -136,6 +137,7 @@ namespace WiFiTracker.Services
 			{Words.Admin, "Admin" },
 			{Words.Add_New_User, "Add New User" },
             {Words.User, "User" },
+            {Words.ManageUsers, "Manage User" },
         };
 
 		//Bulgarian Translations
@@ -199,6 +201,7 @@ namespace WiFiTracker.Services
 			{Words.Admin, "Admin" },
             {Words.Add_New_User, "Добави Нов Потребител" },
             {Words.User, "Потребител" },
+            {Words.ManageUsers, "Управлявайте потребители" },
         };
 
 		//Default Language
