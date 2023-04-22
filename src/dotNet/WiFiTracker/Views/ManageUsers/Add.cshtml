@@ -22,7 +22,13 @@
 
             <div class="form-group">
                 <label class="form-label mt-4" for="inputValid">@ls.get(LanguageService.Words.UserRole):</label>
-                <input type="number" class="form-control" asp-for="UserRoleId">
+               <select class="form-select" asp-for="UserRoleId">
+                   <option selected value="0">Choose a Role </option>
+                   @foreach (var item in Model.UserRoles)
+                {
+                    <option value="@item.Id">@item.Name</option>
+                }
+               </select>
             </div>
 
             <div class="form-group">

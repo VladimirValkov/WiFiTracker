@@ -81,7 +81,15 @@ namespace WiFiTracker.Services
             {
                 CurrentUser = db.Users.FirstOrDefault(a => a.Id == int.Parse(user_id));
                 CurrentAccount = db.Accounts.FirstOrDefault(a => a.Id == CurrentUser.AccoundId);
-                CurrentUserRole = db.UserRoles.FirstOrDefault(a => a.Id == CurrentUser.UserRoleId);
+                if (CurrentUser.IsAdmin)
+                {
+                    CurrentUserRole = new UserRoles();  
+                }
+                else
+                {
+                    CurrentUserRole = db.UserRoles.FirstOrDefault(a => a.Id == CurrentUser.UserRoleId);
+                }
+                
             }
         }
     }

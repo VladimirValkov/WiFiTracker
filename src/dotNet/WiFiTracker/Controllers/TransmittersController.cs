@@ -48,12 +48,21 @@ namespace WiFiTracker.Controllers
         }
         public IActionResult Index()
         {
-			user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
-			return View(db.Transmitters.Where(a=>a.AccoundId == user.CurrentUser.AccoundId).ToList());
+            user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+            if (!user.CurrentUserRole.AllowTransmitters && !user.CurrentUser.IsAdmin)
+            {
+                return NotFound();
+            }
+            return View(db.Transmitters.Where(a=>a.AccoundId == user.CurrentUser.AccoundId).ToList());
         }
 
         public IActionResult Add()
         {
+            user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+            if (!user.CurrentUserRole.AllowTransmitters && !user.CurrentUser.IsAdmin)
+            {
+                return NotFound();
+            }
             var data = new TransmitterData();
             var lastData = db.Transmitters.OrderBy(a=>a.Id).Last();
             data.LastLatitude = lastData.Latitude.ToString();

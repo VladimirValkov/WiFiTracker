@@ -26,6 +26,10 @@ namespace WiFiTracker.Controllers
         public IActionResult Index()
         {
 			user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+            if (!user.CurrentUserRole.AllowReportLiveView && !user.CurrentUser.IsAdmin)
+            {
+                return NotFound();
+            }
 			var data = new LiveViewModel();
             var terminals = db.Terminals.Where(a => a.AccoundId == user.CurrentUser.AccoundId).ToList();
             data.data = db.Points.AsEnumerable()

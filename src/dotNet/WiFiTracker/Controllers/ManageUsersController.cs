@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WiFiTracker.DB;
+using WiFiTracker.Models;
 using WiFiTracker.Services;
 
 namespace WiFiTracker.Controllers
@@ -45,22 +46,40 @@ namespace WiFiTracker.Controllers
 			{
 				return NotFound();
 			}
-			return View();
+			var data = db.UserRoles.Where(a => a.AccoundId == user.CurrentUser.AccoundId).Select(a => new ManageUsersModel.UserRoleModel
+			{
+				Id = a.Id,
+				Name = a.Name
+			}).ToList();
+			var output = new ManageUsersModel()
+			{
+				UserRoles = data,
+			};
+			return View(output);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Add(User data)
+		public IActionResult Add(ManageUsersModel data)
 		{
 			user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
 			if (ModelState.IsValid)
 			{
 				data.AccoundId = user.CurrentUser.AccoundId;
-				db.Users.Add(data);
+				var dbddata = new User()
+				{
+					AccoundId = data.AccoundId,
+					UserName = data.UserName,
+					Password = data.Password,
+					Email = data.Email,
+					UserRoleId = data.UserRoleId,
+					IsAdmin = data.IsAdmin
+				};
+				db.Users.Add(dbddata);
 				db.SaveChanges();
 				return RedirectToAction("Index");
 			}
-			return View(data);
+				return View(data);
 
 		}
 
@@ -76,18 +95,44 @@ namespace WiFiTracker.Controllers
 			{
 				return NotFound();
 			}
-			return View(data);
+            var dbdata = db.UserRoles.Where(a => a.AccoundId == user.CurrentUser.AccoundId).Select(a => new ManageUsersModel.UserRoleModel
+            {
+                Id = a.Id,
+                Name = a.Name
+            }).ToList();
+            var output = new ManageUsersModel()
+            {
+				Id = data.Id,
+                UserRoles = dbdata,
+                AccoundId = user.CurrentUser.AccoundId,
+                UserName = data.UserName,
+                Password = data.Password,
+                Email = data.Email,
+                UserRoleId = data.UserRoleId,
+                IsAdmin = data.IsAdmin
+            };
+            return View(output);
 		}
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult Edit(User data)
+		public IActionResult Edit(ManageUsersModel data)
 		{
 			user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
 			if (ModelState.IsValid)
 			{
-				data.AccoundId = user.CurrentUser.AccoundId;
-				db.Users.Update(data);
+                data.AccoundId = user.CurrentUser.AccoundId;
+                var dbdata = new User()
+                {
+					Id = data.Id,
+                    AccoundId = data.AccoundId,	
+                    UserName = data.UserName,
+                    Password = data.Password,
+                    Email = data.Email,
+                    UserRoleId = data.UserRoleId,
+                    IsAdmin = data.IsAdmin
+                };
+				db.Users.Update(dbdata);
 				db.SaveChanges();
 				return RedirectToAction("Index");
 			}

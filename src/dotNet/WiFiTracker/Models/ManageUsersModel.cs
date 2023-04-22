@@ -18,11 +18,12 @@ namespace WiFiTracker.Models
 
         public int AccoundId { get; set; }
 
-        public List<string> UserRoles { get; set; }
+        public List<UserRoleModel> UserRoles { get; set; }
 
         public class UserRoleModel
         {
             public int Id { get; set; }
+            public string Name { get; set; }
         }
     }
 }

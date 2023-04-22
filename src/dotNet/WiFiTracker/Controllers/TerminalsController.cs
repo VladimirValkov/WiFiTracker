@@ -24,13 +24,21 @@ namespace WiFiTracker.Controllers
             
         }
         public IActionResult Index()
-        {
+        { 
 			user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
-			return View(db.Terminals.Where(a=>a.AccoundId == user.CurrentUser.AccoundId).ToList());
+            if (!user.CurrentUserRole.AllowTerminals && !user.CurrentUser.IsAdmin)
+            {
+                return NotFound();
+            }
+            return View(db.Terminals.Where(a=>a.AccoundId == user.CurrentUser.AccoundId).ToList());
         }
         public IActionResult Add()
         {
-            
+            user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+            if (!user.CurrentUserRole.AllowTerminals && !user.CurrentUser.IsAdmin)
+            {
+                return NotFound();
+            }
             return View();
         }
 
@@ -52,6 +60,11 @@ namespace WiFiTracker.Controllers
 
         public IActionResult Edit(int? id)
         {
+            user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+            if (!user.CurrentUserRole.AllowTerminals && !user.CurrentUser.IsAdmin)
+            {
+                return NotFound();
+            }
             if (id == null || id == 0)
             {
                 return NotFound();
@@ -82,6 +95,11 @@ namespace WiFiTracker.Controllers
 
         public IActionResult Delete(int? id)
         {
+            user.LoadLoggedUserData(HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier).Value);
+            if (!user.CurrentUserRole.AllowTerminals && !user.CurrentUser.IsAdmin)
+            {
+                return NotFound();
+            }
             if (id == null || id == 0)
             {
                 return NotFound();
